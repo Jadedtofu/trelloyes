@@ -4,11 +4,13 @@ import List from './composition/List.js';
 
 function App(props) {
   // console.log(props.storeData.lists);
-  const storeList = props.storeData.lists;
-  let allCards = props.storeData.allCards; 
+  const storeList = props.storeData.lists;  // access STORE list
+  let allCards = props.storeData.allCards;  // access card info
 
-  const listItemHeaders = storeList.map(function(listItem) {
-    let myCards = listItem.cardIds.map(cardID => allCards[cardID] );
+  const listItems = storeList.map(function(listItem) {
+    // iterate through list of objects, then:
+    let myCards = listItem.cardIds.map(cardID => allCards[cardID] );  // iterate through each card id in a list
+        // return the value of each card id from allCards 
     console.log(myCards);
       return <List key={listItem.id} cards={myCards}>{listItem.header}</List>;
     }
@@ -20,7 +22,7 @@ function App(props) {
         <h1>Trelloyes!</h1>
       </header>
       <div className='App-list'>
-        {listItemHeaders}
+        {listItems}
       </div>
     </main>
   );
