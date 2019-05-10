@@ -21,6 +21,7 @@ const STORE = {
         cardIds: [ 'l', 'm' ],
       },
     ],
+    
     allCards: {
       'a': { title: 'First card', content: 'lorem ipsum' },
       'b': { title: 'Second card', content: 'lorem ipsum' },
