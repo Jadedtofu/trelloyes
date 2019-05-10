@@ -37,4 +37,5 @@ const STORE = {
       'm': { title: 'Thirteenth card', content: 'lorem ipsum' },
     },
   }
-  
+
+export default STORE;
