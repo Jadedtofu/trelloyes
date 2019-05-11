@@ -12,7 +12,7 @@ function App(props) {
     let myCards = listItem.cardIds.map(cardID => allCards[cardID] );  // iterate through each card id in a list
         // return the value of each card id from allCards 
     console.log(myCards);
-      return <List key={listItem.id} cards={myCards}>{listItem.header}</List>;
+      return <List key={listItem.id} cards={myCards} header={listItem.header}></List>;
     }
   );
 
