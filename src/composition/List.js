@@ -6,6 +6,7 @@ export default function List(props) {
     const cards = props.cards;
     const listCards = cards.map( (card, i) =>
         <Card 
+            id={card.id}
             key={(i+1).toString()} 
             title={card.title} 
             content={card.content} 
@@ -20,9 +21,13 @@ export default function List(props) {
             </header>
             <div className='List-cards'>
                 {listCards}
-                <button onClick={() => props.onAddRandoCard()} type='button' className='List-add-button'>
-                    + Add Random Card
-                </button>
+            <button 
+                onClick={() => props.onAddRandoCard(props.id)} 
+                type='button' 
+                className='List-add-button'
+            >
+                + Add Random Card
+            </button>
             </div>
         </section>
     );

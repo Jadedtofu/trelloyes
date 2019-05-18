@@ -1,75 +1,112 @@
 import React, { Component } from 'react';
 import './App.css';
+import STORE from './STORE';
 import List from './composition/List.js';
 
-export default class App extends Component {
-  static defaultProps = {
-    store: {
-      lists: [],
-      allCards: {},
-    }
-  };
-
-  state = {
-    lists: [
-      {
-        id: '1',
-        header: 'First list',
-        cardIds: [ 'a', 'b', 'e', 'f', 'g', 'j', 'l', 'm' ],
-      },
-      {
-        id: '2',
-        header: 'Second list',
-        cardIds: ['b', 'c', 'd', 'f', 'h', 'i', 'k'],
-      },
-      {
-        id: '3',
-        header: 'Third list',
-        cardIds: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm' ],
-      },
-      {
-        id: '4',
-        header: 'Fourth list',
-        cardIds: [ 'l', 'm' ],
-      },
-    ],
-    
-    allCards: {
-      'a': { title: 'First card', content: 'lorem ipsum' },
-      'b': { title: 'Second card', content: 'lorem ipsum' },
-      'c': { title: 'Third card', content: 'lorem ipsum' },
-      'd': { title: 'Fourth card', content: 'lorem ipsum' },
-      'e': { title: 'Fifth card', content: 'lorem ipsum' },
-      'f': { title: 'Sixth card', content: 'lorem ipsum' },
-      'g': { title: 'Seventh card', content: 'lorem ipsum' },
-      'h': { title: 'Eighth card', content: 'lorem ipsum' },
-      'i': { title: 'Ninth card', content: 'lorem ipsum' },
-      'j': { title: 'Tenth card', content: 'lorem ipsum' },
-      'k': { title: 'Eleventh card', content: 'lorem ipsum' },
-      'l': { title: 'Twelth card', content: 'lorem ipsum' },
-      'm': { title: 'Thirteenth card', content: 'lorem ipsum' },
-    }
-  };
- 
-handleDeleteCard = () => {
-  console.log('handle delete card called');
+const newRandomCard = () => {
+  const id = Math.random().toString(36).substring(2, 4)
+    + Math.random().toString(36).substring(2, 4);
+  return {
+    id,
+    title: `Random Card ${id}`,
+    content: 'lorem ipsum',
+  }
 }
 
-handleAddRandoCard = () => {
+function omit(obj, keyToOmit) {
+            // v---- .entries(obj) turning object to an array
+  return Object.entries(obj).reduce(      // v------- this is all the first parameter
+    (newObj, [key, value]) => 
+      key === keyToOmit ? newObj : {...newObj, [key]: value},
+    {}  // <--- this is the second parameter
+  );
+
+  /*
+  let tempAllCards = {};
+   let keys = Object.keys(this.state.store.allCards);
+   tempArray = keys.filter(key => key !== cardID)
+   tempArray.forEach(item => {
+       tempAllCards[item] = this.state.store.allCards[item]
+     })
+  */
+}
+
+export default class App extends Component {
+  // static defaultProps = {
+  //   store: {
+  //     lists: [],
+  //     allCards: {},
+  //   }
+  // };
+
+  state = {
+      store: STORE
+  }
+
+handleDeleteCard = (cardId) => {
+  // console.log('handle delete card called');
+  // console.log(cardId);
+    // v-- assigning this object to this other object
+    // assuming store has 2 pieces with identical matching structure
+  const { 
+      lists, 
+      allCards 
+    } = this.state.store;
+
+  const newLists = lists.map(list => (
+    {...list,
+    cardIds: list.cardIds.filter(id => id !== cardId)}
+  ));
+
+  const newCards = omit(allCards, cardId);
+
+  this.setState({
+    store: {
+      lists: newLists,
+      allCards: newCards
+    }
+  });
+}
+
+handleAddRandoCard = (listId) => {
   console.log('handle add rando card called');
+  const newCard = newRandomCard();
+
+  const newLists = this.state.store.lists.map(list => {
+    if (list.id === listId) {
+      return {
+        ...list,
+        cardIds: [...list.cardIds, newCard.id]
+      };
+    }
+    return list;
+  });
+
+  this.setState({
+    store: {
+      lists: newLists,
+      allCards: {
+        ...this.state.store.allCards,
+        [newCard.id]: newCard
+      }
+    }
+  });
 }
 
  render() {
-  let stateList = this.state.lists;
-  let stateCards = this.state.allCards;
-  let stateListItems = stateList.map(function(listItem) {
+  let stateList = this.state.store.lists;
+  let stateCards = this.state.store.allCards;
+  // console.log(this);   v-- removed function() for => (to pass this)
+  let stateListItems = stateList.map((listItem) => {
+    // console.log(this);
     return (
       <List
+        id={listItem.id}
         key={listItem.id}
         header={listItem.header}
         cards={listItem.cardIds.map(cardID => stateCards[cardID])}
-        onDeleteCard={() => this.handleDeleteCard()}
-        onAddRandoCard={() => this.handleAddRandoCard()}
+        onDeleteCard={this.handleDeleteCard}
+        onAddRandoCard={this.handleAddRandoCard}
       />
     );
   });
@@ -85,7 +122,7 @@ handleAddRandoCard = () => {
     </main>
   );
  }   
-
+}
   // const storeList = this.props.storeData.lists;  // access STORE list
   // let allCards = this.props.storeData.allCards;  // access card info
 
@@ -104,7 +141,6 @@ handleAddRandoCard = () => {
   //     );
   //   }
   // );
-}
 
 // function App(props) {
 //   // console.log(props.storeData.lists);
